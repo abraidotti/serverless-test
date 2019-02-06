@@ -1,7 +1,7 @@
 service: my-express-application
 
 custom:
-  tableName: 'users-table-${self:provider.stage}'
+  tableName: 'remote-machine-pings-table-${self:provider.stage}'
 
 provider:
   name: aws
@@ -18,9 +18,9 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource:
-        - { "Fn::GetAtt": ["UsersDynamoDBTable", "Arn" ] }
+        - { "Fn::GetAtt": ["RemoteMachinePingsDynamoDBTable", "Arn" ] }
   environment:
-    USERS_TABLE: ${self:custom.tableName}
+    REMOTE_MACHINE_PINGS_TABLE: ${self:custom.tableName}
 
 functions:
   app:
@@ -28,19 +28,27 @@ functions:
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'
+  getMachine:
+    handler: index.handler
+    events:
+      - http: 'GET /machines/{proxy+}'
+  createMachine:
+    handler: index.handler
+    events:
+      - http: 'POST /machines'
 
 resources:
   Resources:
-    UsersDynamoDBTable:
+    RemoteMachinePingsDynamoDBTable:
       Type: 'AWS::DynamoDB::Table'
       Properties:
         AttributeDefinitions:
           -
-            AttributeName: userId
+            AttributeName: machineId
             AttributeType: S
         KeySchema:
           -
-            AttributeName: userId
+            AttributeName: machineId
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1

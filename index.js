@@ -6,61 +6,61 @@ const app = express();
 const AWS = require('aws-sdk');
 
 
-const { USERS_TABLE } = process.env;
+const { REMOTE_MACHINE_PINGS_TABLE } = process.env;
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 app.use(bodyParser.json({ strict: false }));
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('Ping!');
 });
 
-// Get User endpoint
-app.get('/users/:userId', (req, res) => {
+// Get Machine endpoint
+app.get('/machines/:machineId', (req, res) => {
   const params = {
-    TableName: USERS_TABLE,
+    TableName: REMOTE_MACHINE_PINGS_TABLE,
     Key: {
-      userId: req.params.userId,
+      machineId: req.params.machineId,
     },
   }
 
   dynamoDb.get(params, (error, result) => {
     if (error) {
       console.log(error);
-      res.status(400).json({ error: 'Could not get user' });
+      res.status(400).json({ error: 'Could not get machine' });
     }
     if (result.Item) {
-      const { userId, name } = result.Item;
-      res.json({ userId, name });
+      const { machineId, time } = result.Item;
+      res.json({ machineId, time });
     } else {
-      res.status(404).json({ error: 'User not found' });
+      res.status(404).json({ error: 'Machine not found' });
     }
   });
 })
 
-// Create User endpoint
-app.post('/users', (req, res) => {
-  const { userId, name } = req.body;
-  if (typeof userId !== 'string') {
-    res.status(400).json({ error: '"userId" must be a string' });
-  } else if (typeof name !== 'string') {
-    res.status(400).json({ error: '"name" must be a string' });
+// Create Machine endpoint
+app.post('/machines', (req, res) => {
+  const { machineId, time } = req.body;
+  if (typeof machineId !== 'string') {
+    res.status(400).json({ error: '"machineId" must be a string' });
+  } else if (typeof time !== 'string') {
+    res.status(400).json({ error: '"time" must be a string' });
   }
 
   const params = {
-    TableName: USERS_TABLE,
+    TableName: REMOTE_MACHINE_PINGS_TABLE,
     Item: {
-      userId,
-      name,
+      machineId,
+      time,
     },
   };
 
   dynamoDb.put(params, (error) => {
     if (error) {
       console.log(error);
-      res.status(400).json({ error: 'Could not create user' });
+      res.status(400).json({ error: 'Could not create machine' });
     }
-    res.json({ userId, name });
+    res.json({ machineId, time });
   });
 });
 
