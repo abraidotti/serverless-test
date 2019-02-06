@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/abraidotti/serverless-test#readme",
   "dependencies": {
+    "aws-sdk": "^2.397.0",
+    "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "serverless-http": "^1.9.0"
   },
