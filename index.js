@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
 });
 
 // Get Machine endpoint
-app.get('/machines/:machineId', (req, res) => {
+app.get('/ping/:machineId', (req, res) => {
   const params = {
     TableName: REMOTE_MACHINE_PINGS_TABLE,
     Key: {
@@ -39,7 +39,7 @@ app.get('/machines/:machineId', (req, res) => {
 })
 
 // Create Machine endpoint
-app.post('/machines', (req, res) => {
+app.post('/ping', (req, res) => {
   const { machineId, time } = req.body;
   if (typeof machineId !== 'string') {
     res.status(400).json({ error: '"machineId" must be a string' });

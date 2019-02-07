@@ -31,11 +31,11 @@ functions:
   getMachine:
     handler: index.handler
     events:
-      - http: 'GET /machines/{proxy+}'
+      - http: 'GET /ping/{proxy+}'
   createMachine:
     handler: index.handler
     events:
-      - http: 'POST /machines'
+      - http: 'POST /ping'
 
 resources:
   Resources:
